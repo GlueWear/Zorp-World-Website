@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZORP WORLD</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #006400;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .title {
+            font-size: 72px;
+            font-weight: bold;
+            color: #FFD700;
+            letter-spacing: 8px;
+            margin-bottom: 60px;
+            text-shadow: 
+                3px 3px 0px #FF4500,
+                6px 6px 0px #8B0000;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 
+                    3px 3px 0px #FF4500,
+                    6px 6px 0px #8B0000,
+                    0 0 20px #FFD700;
+            }
+            to {
+                text-shadow: 
+                    3px 3px 0px #FF4500,
+                    6px 6px 0px #8B0000,
+                    0 0 40px #FFD700,
+                    0 0 60px #FFD700;
+            }
+        }
+
+        .balance-bar {
+            background: linear-gradient(180deg, #003300 0%, #001a00 100%);
+            border: 4px solid #FFD700;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 
+                0 0 20px rgba(255, 215, 0, 0.5),
+                inset 0 0 20px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .balance-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.2), transparent);
+            animation: scan 3s infinite;
+        }
+
+        @keyframes scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .balance-label {
+            font-size: 24px;
+            color: #00FF00;
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #00FF00;
+        }
+
+        .balance-amount {
+            font-size: 64px;
+            font-weight: bold;
+            color: #FFD700;
+            letter-spacing: 6px;
+            text-shadow: 
+                2px 2px 0px #FF4500,
+                0 0 20px #FFD700;
+            font-family: 'Courier New', monospace;
+            position: relative;
+            z-index: 1;
+        }
+
+        .nock-symbol {
+            font-size: 36px;
+            color: #00FF00;
+            margin-left: 10px;
+            text-shadow: 0 0 10px #00FF00;
+        }
+
+        .loading {
+            font-size: 32px;
+            color: #FFD700;
+            letter-spacing: 4px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0.3; }
+        }
+
+        .error {
+            background: #8B0000;
+            border: 4px solid #FF0000;
+            color: #FFD700;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 18px;
+            letter-spacing: 2px;
+            margin-top: 30px;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+        }
+
+        .refresh-btn {
+            margin-top: 40px;
+            background: #FFD700;
+            color: #006400;
+            border: 4px solid #FF4500;
+            padding: 15px 40px;
+            font-size: 24px;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 3px;
+            cursor: pointer;
+            border-radius: 8px;
+            box-shadow: 
+                4px 4px 0px #8B0000,
+                0 0 20px rgba(255, 215, 0, 0.5);
+            transition: all 0.1s;
+        }
+
+        .refresh-btn:hover:not(:disabled) {
+            transform: translate(2px, 2px);
+            box-shadow: 
+                2px 2px 0px #8B0000,
+                0 0 30px rgba(255, 215, 0, 0.8);
+        }
+
+        .refresh-btn:active:not(:disabled) {
+            transform: translate(4px, 4px);
+            box-shadow: none;
+        }
+
+        .refresh-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .last-updated {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #00FF00;
+            letter-spacing: 2px;
+            text-shadow: 0 0 5px #00FF00;
+        }
+
+        /* Retro scanline effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 0, 0, 0.1) 2px,
+                rgba(0, 0, 0, 0.1) 4px
+            );
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 48px;
+                letter-spacing: 4px;
+                margin-bottom: 40px;
+            }
+
+            .balance-amount {
+                font-size: 42px;
+                letter-spacing: 3px;
+            }
+
+            .balance-label {
+                font-size: 18px;
+                letter-spacing: 2px;
+            }
+
+            .nock-symbol {
+                font-size: 24px;
+            }
+
+            .refresh-btn {
+                font-size: 18px;
+                padding: 12px 30px;
+                letter-spacing: 2px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">ZORP WORLD</div>
+
+        <div class="balance-bar">
+            <div class="balance-label">$NOCK BALANCE</div>
+            <div id="balanceDisplay" class="loading">LOADING...</div>
+        </div>
+
+        <div id="errorDisplay"></div>
+
+        <button class="refresh-btn" id="refreshBtn" onclick="loadBalance()" disabled>
+            ⟳ REFRESH
+        </button>
+
+        <div class="last-updated" id="lastUpdated"></div>
+    </div>
+
+    <script>
+        // Vercel backend API endpoint
+        const API_URL = 'https://nockchain-wallet-checker.vercel.app/api/wallet';
+        
+        // Auto-refresh every 30 seconds
+        const AUTO_REFRESH_INTERVAL = 30000;
+        let refreshTimer;
+
+        function formatBalance(nicks) {
+            // Convert nicks to NOCK (assuming 1 NOCK = 1e9 nicks)
+            const nock = nicks / 1000000000;
+            return nock.toLocaleString('en-US', { 
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2
+            });
+        }
+
+        function formatTimestamp(isoString) {
+            const date = new Date(isoString);
+            return date.toLocaleString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            }).toUpperCase();
+        }
+
+        async function loadBalance() {
+            const balanceDisplay = document.getElementById('balanceDisplay');
+            const errorDisplay = document.getElementById('errorDisplay');
+            const lastUpdated = document.getElementById('lastUpdated');
+            const refreshBtn = document.getElementById('refreshBtn');
+            
+            refreshBtn.disabled = true;
+            balanceDisplay.className = 'loading';
+            balanceDisplay.textContent = 'LOADING...';
+            errorDisplay.innerHTML = '';
+            lastUpdated.textContent = '';
+
+            try {
+                const response = await fetch(API_URL);
+                
+                if (!response.ok) {
+                    throw new Error(`ERROR ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.message || 'FETCH FAILED');
+                }
+
+                // Display balance
+                balanceDisplay.className = 'balance-amount';
+                balanceDisplay.innerHTML = `${formatBalance(data.balance)}<span class="nock-symbol">$NOCK</span>`;
+
+                // Show last updated time
+                lastUpdated.textContent = `LAST SCAN: ${formatTimestamp(data.timestamp)}`;
+
+                refreshBtn.disabled = false;
+
+                // Set up auto-refresh
+                clearTimeout(refreshTimer);
+                refreshTimer = setTimeout(loadBalance, AUTO_REFRESH_INTERVAL);
+
+            } catch (error) {
+                console.error('Error:', error);
+                
+                balanceDisplay.className = 'balance-amount';
+                balanceDisplay.textContent = '-- ERROR --';
+                
+                errorDisplay.innerHTML = `
+                    <div class="error">
+                        ⚠ SYSTEM ERROR ⚠<br>
+                        ${error.message}
+                    </div>
+                `;
+                
+                refreshBtn.disabled = false;
+            }
+        }
+
+        // Load balance when page loads
+        window.addEventListener('DOMContentLoaded', loadBalance);
+
+        // Clean up timer when page unloads
+        window.addEventListener('beforeunload', () => {
+            clearTimeout(refreshTimer);
+        });
+    </script>
+</body>
+</html>
