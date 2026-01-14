@@ -178,6 +178,16 @@
             text-shadow: 0 0 5px #00FF00;
         }
 
+        .wallet-address {
+            margin-top: 15px;
+            font-size: 10px;
+            color: #00FF00;
+            letter-spacing: 1px;
+            text-shadow: 0 0 5px #00FF00;
+            word-break: break-all;
+            opacity: 0.7;
+        }
+
         /* Retro scanline effect */
         body::before {
             content: '';
@@ -242,6 +252,8 @@
         </button>
 
         <div class="last-updated" id="lastUpdated"></div>
+
+        <div class="wallet-address" id="walletAddress"></div>
     </div>
 
     <script>
@@ -303,6 +315,7 @@
 
                 // Show last updated time
                 lastUpdated.textContent = `LAST SCAN: ${formatTimestamp(data.timestamp)}`;
+                document.getElementById('walletAddress').textContent = data.address;
 
                 refreshBtn.disabled = false;
 
