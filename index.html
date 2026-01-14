@@ -254,7 +254,7 @@
 
         function formatBalance(nicks) {
             // Convert nicks to NOCK (assuming 1 NOCK = 1e9 nicks)
-            const nock = nicks / 1000000000;
+            const nock = nicks / 65536;
             return nock.toLocaleString('en-US', { 
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 2
